@@ -1,7 +1,6 @@
 // AUTOCOMPLETE
 
 $(window).load(function(){
-  console.log("autocomplete");
   var availableTags = [
 		"ActionScript",
 		"AppleScript",
