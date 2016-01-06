@@ -106,6 +106,8 @@ function rhconectium_scripts() {
 	wp_enqueue_style( 'style-normalize', get_template_directory_uri() . '/css/normalize.css', array(), '20152601' );
 	wp_enqueue_style( 'style-main', get_template_directory_uri() . '/css/main.css', array(), '20152601' );
 
+	wp_enqueue_script( 'style-jquery-ui', get_template_directory_uri() . '/js/jquery-ui.min.css', array(), '20150106', true );
+
 	wp_enqueue_script( 'rhconectium-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20120206', true );
 
 	wp_enqueue_script( 'rhconectium-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true );
@@ -116,42 +118,45 @@ function rhconectium_scripts() {
 	wp_enqueue_script( 'rhconectium-flexslider', get_template_directory_uri() . '/js/jquery.flexslier.js', array(), '20152601', true );
 	wp_enqueue_script( 'rhconectium-magnific-popup', get_template_directory_uri() . '/js/jquery.magnific-popup.js', array(), '20152601', true );
 	wp_enqueue_script( 'rhconectium-main', get_template_directory_uri() . '/js/main.js', array(), '20152601', true );
-    wp_localize_script('rhconectium-main', 'ajax_register_object', array( 
+
+	wp_enqueue_script( 'rhconectium-jquery-ui', get_template_directory_uri() . '/js/jquery-ui.min.js', array(), '20150106', true );
+
+    wp_localize_script('rhconectium-main', 'ajax_register_object', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'redirecturl' => home_url(),
         'loadingmessage' => __('Enviando información...')
     ));
-    wp_localize_script( 'rhconectium-main', 'ajax_login_object', array( 
+    wp_localize_script( 'rhconectium-main', 'ajax_login_object', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'redirecturl' => home_url(),
         'loadingmessage' => __('Enviando información...')
     ));
 
-    wp_localize_script( 'rhconectium-main', 'ajax_retrieve_object', array( 
+    wp_localize_script( 'rhconectium-main', 'ajax_retrieve_object', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'redirecturl' => home_url(),
         'loadingmessage' => __('Enviando información...')
     ));
 
-    wp_localize_script( 'rhconectium-main', 'ajax_register_empresa_object', array( 
+    wp_localize_script( 'rhconectium-main', 'ajax_register_empresa_object', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'redirecturl' => home_url(),
         'loadingmessage' => __('Enviando información...')
     ));
 
-     wp_localize_script( 'rhconectium-main', 'ajax_edit_empresa_object', array( 
+     wp_localize_script( 'rhconectium-main', 'ajax_edit_empresa_object', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'redirecturl' => home_url(),
         'loadingmessage' => __('Enviando información...')
     ));
 
-      wp_localize_script( 'rhconectium-main', 'ajax_voteop_object', array( 
+      wp_localize_script( 'rhconectium-main', 'ajax_voteop_object', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
-        'redirecturl' => home_url(),    
+        'redirecturl' => home_url(),
         'loadingmessage' => __('Enviando información...')
     ));
-       wp_localize_script( 'rhconectium-main', 'ajax_contactar_empresa_object', array( 
-        'ajaxurl' => admin_url( 'admin-ajax.php' ),   
+       wp_localize_script( 'rhconectium-main', 'ajax_contactar_empresa_object', array(
+        'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'loadingmessage' => __('Enviando información...')
     ));
 
@@ -240,7 +245,7 @@ function ajax_login(){
 }
 
 
-function ajax_retrievepassword_init(){ 
+function ajax_retrievepassword_init(){
     // Enable the user with no privileges to run ajax_login() in AJAX
     add_action( 'wp_ajax_nopriv_ajaxretrievepassword', 'ajax_retrievepassword' );
 }
@@ -267,44 +272,44 @@ function ajax_retrievepassword(){
     } else if( ! email_exists( $email ) ) {
         $error = 'La dirección ingresada no corresponde a un usuario registrado.';
     } else {
-                
+
         $random_password = wp_generate_password( 12, false );
         $user = get_user_by( 'email', $email );
-        
+
         $update_user = wp_update_user( array (
-                'ID' => $user->ID, 
+                'ID' => $user->ID,
                 'user_pass' => $random_password
             )
         );
-        
+
         // if  update user return true then lets send user an email containing the new password
         if( $update_user ) {
             $to = $email;
             $subject = '[RH Conectium] Tu nueva contraseña';
             $sender = get_option('blogname');
-            
+
             $message = 'Tu nueva contraseña es: '.$random_password;
-            
+
             $headers[] = 'MIME-Version: 1.0' . "\r\n";
             $headers[] = 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
             $headers[] = "X-Mailer: PHP \r\n";
             $headers[] = 'From: '.$sender.' < '.$email.'>' . "\r\n";
-            
+
             $mail = wp_mail( $to, $subject, $message, $headers );
             if( $mail )
                 $success = 'Nueva contraseña enviada, revisa tu casilla de correo!.';
-                
+
         } else {
             $error = 'Oops! Algo salió mal mientras actualizabamos tus datos :(. Inténtalo mas tarde.';
         }
-        
+
     }
-            
+
     if( ! empty( $error ) ){
         echo json_encode(array('passwordchanged'=>false, 'message'=>$error));
         exit();
     }
-    
+
     if( ! empty( $success ) ){
         echo json_encode(array('passwordchanged'=>true, 'message'=>$success));
         exit();
@@ -312,7 +317,7 @@ function ajax_retrievepassword(){
 }
 
 
-function ajax_register_init(){ 
+function ajax_register_init(){
     // Enable the user with no privileges to run ajax_login() in AJAX
     add_action( 'wp_ajax_nopriv_ajaxregister', 'ajax_register' );
 }
@@ -323,16 +328,16 @@ if (!is_user_logged_in()) {
     add_action('init', 'ajax_register_init');
 }
 
-function ajax_register(){  
+function ajax_register(){
     // First check the nonce, if it fails the function will break
-    
+
     if(check_ajax_referer( 'ajax-register-nonce', 'signonsecurity' , false )){
         echo json_encode(array('loggedin'=>false, 'message'=>__('Error en la verificación nonce.')));
         exit();
     }
 
     // Nonce is checked, get the POST data and sign user on
-    
+
 
     //Check empty parameters
 
@@ -352,7 +357,7 @@ function ajax_register(){
 
     if($_POST['password'] != $_POST['password_confirm'] ){
         echo json_encode(array('loggedin'=>false, 'message'=>__('La confirmación de la contraseña no coincide.')));
-        exit();  
+        exit();
     }
 
 
@@ -363,11 +368,11 @@ function ajax_register(){
     $info['remember'] = true;
     if(strlen($info['user_nicename'])<4){
         echo json_encode(array('loggedin'=>false, 'message'=>__('El nombre de usuario debe tener mas de tres caracteres.')));
-        exit();  
+        exit();
     }
     if(!isValidEmail( $info['user_email'])){
         echo json_encode(array('loggedin'=>false, 'message'=>__('Formato de email incorrecto.')));
-        exit();  
+        exit();
     }
 
     $user_register = wp_insert_user( $info );
@@ -395,16 +400,16 @@ function ajax_register(){
         $user_signon = wp_signon( $info_log, false );
         echo json_encode(array('loggedin'=>true, 'message'=>__('Registro Completo. Redireccionando...')));
         exit();
-        //  ($info['nickname'], $info['user_pass'], 'Registration');       
+        //  ($info['nickname'], $info['user_pass'], 'Registration');
     }
 
 }
 
 
 
-function ajax_register_empresa_init(){ 
+function ajax_register_empresa_init(){
     // Enable the user with no privileges to run ajax_login() in AJAX
-    
+
     add_action( 'wp_ajax_ajaxregisterempresa', 'ajax_register_empresa' );
 }
 
@@ -431,7 +436,7 @@ function ajax_register_empresa(){
     $rubros = $_POST['rubros'];
     $terminos = $_POST['terminos'];
     if(isset($_FILES['logo_empresa'])){
-        $icono = $_FILES['logo_empresa'];  
+        $icono = $_FILES['logo_empresa'];
     }
 
     if(check_ajax_referer( 'ajax-register-nonce', 'security' , false )){
@@ -492,8 +497,8 @@ function ajax_register_empresa(){
 
     if(!isValidEmail( $email )){
         echo json_encode(array('register_emepresa'=>false, 'message'=>__('Formato de email incorrecto.')));
-        exit();  
-    }    
+        exit();
+    }
 
     if( $termino == 'false'){
         echo json_encode(array('register_emepresa'=>false, 'message'=>__('Deben aceptarse los términos y servicios.')));
@@ -502,7 +507,7 @@ function ajax_register_empresa(){
 
     if(strlen( $descripcion ) > 130){
         echo json_encode(array('register_emepresa'=>false, 'message'=>__('La descripción de la empresa es demasiado larga.')));
-        exit();  
+        exit();
     }
 
     $slug_name = sanitize_title($nombre);
@@ -514,8 +519,8 @@ function ajax_register_empresa(){
       'post_title'     => $nombre, // The title of your post.
       'post_status'    => 'draft',
       'post_type'      => 'empresas',
-    ); 
-   
+    );
+
     $new_empresa_id = wp_insert_post( $post, false );
 
     if($new_empresa_id == 0){
@@ -525,11 +530,11 @@ function ajax_register_empresa(){
 
     // required for wp_handle_upload() to upload the file
     $upload_overrides = array( 'test_form' => FALSE );
-     
+
     global $current_user;
     get_currentuserinfo();
     $logged_in_user = $current_user->ID;
-            
+
     // check to see if the file name is not empty
     if ( !empty( $icono['name'] ) ) {
         require_once( ABSPATH . 'wp-admin/includes/image.php' );
@@ -542,7 +547,7 @@ function ajax_register_empresa(){
     }
 
     $rubros = $_POST['rubros'];
-    
+
     if($razon_social){
         update_field('razon_social', $razon_social, $new_empresa_id);
     }
@@ -589,14 +594,14 @@ function ajax_register_empresa(){
     echo json_encode(array('register_emepresa'=>true, 'message'=>__('Empresa registrada.')));
         exit();
 
-    
+
 }
 
 
 
-function ajax_edit_empresa_init(){ 
+function ajax_edit_empresa_init(){
     // Enable the user with no privileges to run ajax_login() in AJAX
-    
+
     add_action( 'wp_ajax_ajaxeditempresa', 'ajax_edit_empresa' );
 }
 
@@ -624,7 +629,7 @@ function ajax_edit_empresa(){
     $rubros = $_POST['rubros'];
     $terminos = $_POST['terminos'];
     if(isset($_FILES['logo_empresa'])){
-        $icono = $_FILES['logo_empresa'];  
+        $icono = $_FILES['logo_empresa'];
     }
 
     if(check_ajax_referer( 'ajax-edit-nonce', 'security' , false )){
@@ -680,8 +685,8 @@ function ajax_edit_empresa(){
 
     if(!isValidEmail( $email )){
         echo json_encode(array('edit_emepresa'=>false, 'message'=>__('Formato de email incorrecto.')));
-        exit();  
-    }    
+        exit();
+    }
 
     if( $termino == 'false'){
         echo json_encode(array('edit_emepresa'=>false, 'message'=>__('Deben aceptarse los términos y servicios.')));
@@ -690,9 +695,9 @@ function ajax_edit_empresa(){
 
     if(strlen( $descripcion ) > 130){
         echo json_encode(array('edit_emepresa'=>false, 'message'=>__('La descripción de la empresa es demasiado larga.')));
-        exit();  
+        exit();
     }
-   
+
     $this_empresa = get_post($empresa_id);
     global $current_user;
     get_currentuserinfo();
@@ -702,8 +707,8 @@ function ajax_edit_empresa(){
         echo json_encode(array('edit_emepresa'=>false, 'message'=>__('No tienes permiso para editar esta empresa.')));
         exit();
     }
-     
-            
+
+
     // check to see if the file name is not empty
     if ( !empty( $icono['name'] ) ) {
         require_once( ABSPATH . 'wp-admin/includes/image.php' );
@@ -716,7 +721,7 @@ function ajax_edit_empresa(){
     }
 
     $rubros = $_POST['rubros'];
-    
+
     if($email){
         update_field('email', $email, $empresa_id);
     }
@@ -755,7 +760,7 @@ function ajax_edit_empresa(){
         }
     }
     echo json_encode(array('edit_empresa'=>true, 'message'=>__('Empresa editada.')));
-    exit();    
+    exit();
 }
 
 
@@ -764,37 +769,37 @@ function ajax_edit_empresa(){
 
 
 
-function auth_user_login($user_login, $password, $login){   
+function auth_user_login($user_login, $password, $login){
     $info = array();
     $info['user_login'] = $user_login;
     $info['user_password'] = $password;
     $info['remember'] = true;
- 
+
      $user_signon = wp_signon( $info, false );
         if ( is_wp_error($user_signon) ){
      echo json_encode(array('loggedin'=>false, 'message'=>__('Usuario o contraseña incorrectos.')));
         } else {
-     wp_set_current_user($user_signon->ID); 
+     wp_set_current_user($user_signon->ID);
             echo json_encode(array('loggedin'=>true, 'message'=>__('Redireccionando...')));
         }
-     
+
      die();
 }
 
 function isValidEmail($email) {
-    return filter_var($email, FILTER_VALIDATE_EMAIL) 
+    return filter_var($email, FILTER_VALIDATE_EMAIL)
         && preg_match('/@.+\./', $email);
 }
 
-function template_chooser($template){    
-  global $wp_query;   
-  $post_type = get_query_var('post_type');   
+function template_chooser($template){
+  global $wp_query;
+  $post_type = get_query_var('post_type');
   if( $wp_query->is_search && $post_type == 'empresas'){
     return locate_template('archive-search-empresa.php');
-  }   
-  return $template;   
+  }
+  return $template;
 }
-add_filter('template_include', 'template_chooser'); 
+add_filter('template_include', 'template_chooser');
 
 function mySearchFilter($query) {
     $post_type = $_GET['post_type'];
@@ -827,7 +832,7 @@ add_filter('pre_get_posts','mySearchFilter');
 // Hook for adding any activity to successful voting
 add_action( 'wti_like_post_vote_action', 'wti_like_post_vote_action', 10, 6 );
 
-function wti_like_post_vote_action( $post_id, $ip, $user_id, $task, $msg, $error ) { 
+function wti_like_post_vote_action( $post_id, $ip, $user_id, $task, $msg, $error ) {
     //wp_redirect( get_permalink($post_id).'/?vote=1'); exit;
 }
 
@@ -882,7 +887,7 @@ function ajax_voteop(){
 
     $error_voto = false;
     $mensaje_error = '';
-    
+
     if($check_empresa == 'false'){
         echo json_encode(array('vote_ok'=>false, 'message'=>__('Debe haber trabajado con esta empresa para poder calificarla.')));
         die();
@@ -890,10 +895,10 @@ function ajax_voteop(){
 
     if($voto == 0 OR ($calidad == 0 AND $cumplimiento == 0 AND $administrativos == 0 ) ){
         echo json_encode(array('vote_ok'=>false, 'message'=>__('Debe elegir su voto y por lo menos una razón del mismo.')));
-        die(); 
+        die();
     }
 
-    
+
 
     if(is_numeric($voto) == false OR is_numeric($calidad) == false OR is_numeric($cumplimiento) == false OR is_numeric($administrativos) == false){
         $error_voto = true;
@@ -901,24 +906,24 @@ function ajax_voteop(){
 
     if($voto > 0){
         if($calidad < 0){
-            $error_voto = true;  
+            $error_voto = true;
         }
         if($cumplimiento < 0){
-            $error_voto = true;  
+            $error_voto = true;
         }
         if($administrativos < 0){
-            $error_voto = true;    
+            $error_voto = true;
         }
     }else{
        if($calidad > 0){
-            $error_voto = true;    
+            $error_voto = true;
         }
         if($cumplimiento > 0){
-            $error_voto = true;   
+            $error_voto = true;
         }
         if($administrativos > 0){
-            $error_voto = true;    
-        } 
+            $error_voto = true;
+        }
     }
     $mensaje_error = 'Ha habido un error con la votación, inténtelo de nuevo.';
     if($error_voto == true){
@@ -928,33 +933,33 @@ function ajax_voteop(){
 
     if($mensaje ==''){
         echo json_encode(array('vote_ok'=>false, 'message'=>__('Debe dejar un comentario para votar.')));
-        die();   
+        die();
     }
-    
+
     if(userYaVoto($post_id, $user_id)){
         //ChromePhp::log('entré');
         echo json_encode(array('vote_ok'=>false, 'message'=>__('Ya has votado a esta empresa.')));
         die();
     }
-    
 
-    $result_insert = $wpdb->insert( 
-        'f8c_vote_info', 
-        array( 
-            'id_user' => $user_id, 
+
+    $result_insert = $wpdb->insert(
+        'f8c_vote_info',
+        array(
+            'id_user' => $user_id,
             'id_empresa' => $post_id,
             'calidad_servicio' => $calidad,
             'cumplimiento_plazos' => $cumplimiento,
             'aspectos_administrativos' => $administrativos,
         )
     );
-    
+
 
     $user_info = get_userdata( $user_id );
 
     $commentdata = array(
         'comment_post_ID' => $post_id, // to which post the comment will show up
-        'comment_content' => $mensaje, //fixed value - can be dynamic 
+        'comment_content' => $mensaje, //fixed value - can be dynamic
         'comment_author' => $user_info->display_name,
         'comment_type' => '', //empty for regular comments, 'pingback' for pingbacks, 'trackback' for trackbacks
         'comment_parent' => 0, //0 if it's not a reply to another comment; if it's a reply, mention the parent comment ID here
@@ -969,11 +974,11 @@ function ajax_voteop(){
     if($result_insert == true){
         $mensaje_ok = 'Guardando los datos, espere por favor';
         echo json_encode(array('vote_ok'=>true, 'redirect'=> $link ,'message'=>__($mensaje_ok)));
-        die();   
+        die();
     }else{
         $mensaje_error = 'Ha habido un error en la votación, inténtelo mas tarde.';
         echo json_encode(array('vote_ok'=>false, 'message'=>__($mensaje_error)));
-        die();  
+        die();
     }
 }
 
@@ -982,7 +987,7 @@ function getDatosVotacion($id_empresa){
     $vot_query = 'SELECT * FROM f8c_wti_like_post WHERE post_id ='.$id_empresa;
     $det_query = 'SELECT * FROM f8c_vote_info WHERE id_empresa ='.$id_empresa;
     $votacion = $wpdb->get_results( $vot_query, OBJECT );
-    $detalles = $wpdb->get_results( $det_query, OBJECT );  
+    $detalles = $wpdb->get_results( $det_query, OBJECT );
     $resultado;
     $resultado['total'] = 0;
     $resultado['votos_positivos'] = 0;
@@ -996,32 +1001,32 @@ function getDatosVotacion($id_empresa){
     foreach ($votacion as $voto) {
         $resultado['total'] = $resultado['total'] +1;
         if($voto->value =='1'){
-            $resultado['votos_positivos'] = $resultado['votos_positivos'] +1;   
+            $resultado['votos_positivos'] = $resultado['votos_positivos'] +1;
         }else{
             $resultado['votos_negativos'] = $resultado['votos_negativos'] +1;
-        } 
+        }
     }
-    
+
     foreach ($detalles as $detalle) {
         if($detalle->calidad_servicio =='1'){
-            $resultado['calidad_servicio_positivo'] = $resultado['calidad_servicio_positivo'] +1;   
+            $resultado['calidad_servicio_positivo'] = $resultado['calidad_servicio_positivo'] +1;
         }
         if($detalle->cumplimiento_plazos =='1'){
-            $resultado['cumplimiento_plazos_positivo'] = $resultado['cumplimiento_plazos_positivo'] +1;   
+            $resultado['cumplimiento_plazos_positivo'] = $resultado['cumplimiento_plazos_positivo'] +1;
         }
         if($detalle->aspectos_administrativos =='1'){
-            $resultado['aspectos_administrativos_positivo'] = $resultado['aspectos_administrativos_positivo'] +1;   
+            $resultado['aspectos_administrativos_positivo'] = $resultado['aspectos_administrativos_positivo'] +1;
         }
         if($detalle->calidad_servicio =='-1'){
-            $resultado['calidad_servicio_negativo'] = $resultado['calidad_servicio_negativo'] +1;   
+            $resultado['calidad_servicio_negativo'] = $resultado['calidad_servicio_negativo'] +1;
         }
         if($detalle->cumplimiento_plazos =='-1'){
-            $resultado['cumplimiento_plazos_negativo'] = $resultado['cumplimiento_plazos_negativo'] +1;   
+            $resultado['cumplimiento_plazos_negativo'] = $resultado['cumplimiento_plazos_negativo'] +1;
         }
         if($detalle->aspectos_administrativos =='-1'){
-            $resultado['aspectos_administrativos_negativo'] = $resultado['aspectos_administrativos_negativo'] +1;   
+            $resultado['aspectos_administrativos_negativo'] = $resultado['aspectos_administrativos_negativo'] +1;
         }
-    }        
+    }
     return $resultado;
 }
 
@@ -1037,7 +1042,7 @@ function getInfoEmpresas(){
     $emp_query = "SELECT ID, post_title FROM f8c_posts WHERE post_type = 'empresas'";
     $empresas = $wpdb->get_results( $emp_query, OBJECT_K );
     $info_empresas = array();
-    
+
     $vot_query = "SELECT post_id, SUM( IF( value =  '1', 1, 0 ) ) AS votos_positivos, SUM( IF( value =  '-1', 1, 0 ) ) AS votos_negativos, SUM( value ) total
                 FROM f8c_wti_like_post
                 GROUP BY post_id
@@ -1049,9 +1054,9 @@ function getInfoEmpresas(){
                 GROUP BY comment_post_ID DESC";
     $comments = $wpdb->get_results( $comments_query, OBJECT_K );
 
-    
+
     foreach ($empresas as $id=>$datos){
-       
+
         $info_empresas[$id]['nombre'] = $datos->post_title;
 
         if(array_key_exists($id,$votaciones)){
@@ -1061,7 +1066,7 @@ function getInfoEmpresas(){
         }else{
             $info_empresas[$id]['votos']['votos_positivos'] = "0";
             $info_empresas[$id]['votos']['votos_negativos'] = "0";
-            $info_empresas[$id]['votos']['total'] = "0"; 
+            $info_empresas[$id]['votos']['total'] = "0";
         }
         if(array_key_exists($id,$comments)){
             $info_empresas[$id]['comentarios']['comentarios_usuarios'] = $comments[$id]->comentarios_usuarios;
@@ -1070,10 +1075,10 @@ function getInfoEmpresas(){
         }else{
             $info_empresas[$id]['comentarios']['comentarios_usuarios'] = "0";
             $info_empresas[$id]['comentarios']['respuestas'] = "0";
-            $info_empresas[$id]['comentarios']['total'] = "0"; 
+            $info_empresas[$id]['comentarios']['total'] = "0";
         }
     }
-    
+
 
     return $info_empresas;
 }
@@ -1098,7 +1103,7 @@ function ajax_contactar_empresa(){
     check_ajax_referer( 'ajax-contactar_empresa-nonce', 'security' );
 
     // Nonce is checked, get the POST data and sign user on
-    if( is_user_logged_in() ){    
+    if( is_user_logged_in() ){
         global $current_user;
         get_currentuserinfo();
         $info_consultante = array();
@@ -1107,12 +1112,12 @@ function ajax_contactar_empresa(){
         $info_consultante['consulta'] = $_POST['consulta'];
 
         if($info_consultante['nombre'] == '' OR $info_consultante['email'] == ''){
-            echo json_encode(array('consulta_enviada'=>false, 'message'=>__('Complete correctamente su nombre de usuario y su email para poder mandar la consulta.')));  
+            echo json_encode(array('consulta_enviada'=>false, 'message'=>__('Complete correctamente su nombre de usuario y su email para poder mandar la consulta.')));
             die();
         }
 
         if($info_consultante['consulta'] == ''){
-            echo json_encode(array('consulta_enviada'=>false, 'message'=>__('La consulta no debe estar vacía para ser enviada.')));  
+            echo json_encode(array('consulta_enviada'=>false, 'message'=>__('La consulta no debe estar vacía para ser enviada.')));
             die();
         }
 
@@ -1121,13 +1126,13 @@ function ajax_contactar_empresa(){
         $empresa = get_post($post_id);
 
         $info_empresa = array();
-        $info_empresa['email'] = get_field('email',$post_id); 
+        $info_empresa['email'] = get_field('email',$post_id);
         $info_empresa['nombre'] = $empresa->post_title;
         $info_empresa['razon_social'] = get_field('razon_social',$post_id);
 
         $headers[] = 'From: RHConectium <hola@creativedog.com.ar>';
         $headers[] = 'Bcc: RHConectium <hola@creativedog.com.ar>';
-        $headers[] = 'Content-type: text/html'; 
+        $headers[] = 'Content-type: text/html';
         $subject = $info_empresa['nombre'].' ('.$info_empresa['razon_social'].')'.', has recibido una consulta.';
         $message = '<br/><br/>';
         $message .= "Nombre de Usuario del consultante: ".$info_consultante['nombre'];
@@ -1136,7 +1141,7 @@ function ajax_contactar_empresa(){
         $message .= "<br/><br/>";
         $message .= "Consulta: ".$info_consultante['consulta'];
         $message .= "<br/><br/>";
-        
+
         //sends email
         $mail_send = wp_mail($info_empresa['email'], $subject, $message, $headers );
 
@@ -1147,7 +1152,7 @@ function ajax_contactar_empresa(){
         }
         die();
     }else{
-        echo json_encode(array('consulta_enviada'=>false, 'message'=>__('Ha habido un error obteniendo los datos del usuario. Inténtelo mas tarde.')));   
+        echo json_encode(array('consulta_enviada'=>false, 'message'=>__('Ha habido un error obteniendo los datos del usuario. Inténtelo mas tarde.')));
         die();
     }
     die();
@@ -1164,7 +1169,7 @@ function descargar_informacion() {
     $info_empresas = getInfoEmpresas();
     //ChromePhp::log($info_empresas);
     $objPHPExcel = new PHPExcel();
-            
+
            //Informacion del excel
            $objPHPExcel->
             getProperties()
@@ -1174,8 +1179,8 @@ function descargar_informacion() {
                 ->setSubject("Informacion Empresas")
                 ->setDescription("Documento generado con PHPExcel")
                 ->setKeywords("RhConectium")
-                ->setCategory("RhConectium");    
-         
+                ->setCategory("RhConectium");
+
            $i = 2;
            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1','EMPRESA')
             ->setCellValue('B1','VOTOS POSITIVOS')
@@ -1184,19 +1189,19 @@ function descargar_informacion() {
             ->setCellValue('E1','RESPUESTAS');
 
            foreach ($info_empresas as $empresa) {
-                $objPHPExcel->setActiveSheetIndex(0)             
+                $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValue('A'.$i, htmlspecialchars_decode($empresa['nombre']))
                     ->setCellValue('B'.$i, $empresa['votos']['votos_positivos'])
                     ->setCellValue('C'.$i, $empresa['votos']['votos_negativos'])
                     ->setCellValue('D'.$i, $empresa['comentarios']['comentarios_usuarios'])
                     ->setCellValue('E'.$i, $empresa['comentarios']['respuestas']);
-          
+
               $i++;
-               
+
            }
             header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             header('Content-Disposition: attachment; filename="info_empresas'.time().'.xlsx"');
-            header('Cache-Control: max-age=0');   
+            header('Cache-Control: max-age=0');
             $writer = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
             $writer->save('php://output');
             exit();
