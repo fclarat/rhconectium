@@ -3,7 +3,8 @@
 $(window).load(function(){
     $.post( "autocomplete.php", function( data ) {
         $( "#s" ).autocomplete({
-            source: $.parseJSON(data)
+            source: $.parseJSON(data),
+            minLength: 3
         });
     });
 });
