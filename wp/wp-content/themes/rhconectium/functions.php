@@ -857,6 +857,20 @@ function userYaVoto($post_id, $user_id){
     }
 }
 
+function userGetVote($post_id, $user_id){
+    global $wpdb;
+    $vot_query = 'SELECT value FROM f8c_wti_like_post WHERE post_id ='.$post_id.' AND user_id ='.$user_id;
+    //ChromePhp::log($vot_query);
+
+    $result_query = $wpdb->get_results( $vot_query, OBJECT );
+
+    if (isset($result_query[0])) {
+        return $result_query[0]->value;
+    }
+
+    return 0;
+}
+
 function ajax_voteop(){
     global $current_user;
     global $wpdb;
