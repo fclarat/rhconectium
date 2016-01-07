@@ -59,7 +59,7 @@ get_header(); ?>
 
                         <!-- Recomendado -->
                         <div class="one_half">
-                            <div class="radial-progress" data-progress="<?php echo ceil(($datos['votos_positivos']/$datos['total'])*100); ?>">
+                            <div class="radial-progress" data-progress="<?php echo $datos['total'] > 0 ?  ceil(($datos['votos_positivos']/$datos['total'])*100) : 0; ?>">
                                 <div class="circle">
                                     <div class="mask full">
                                         <div class="fill"></div>
@@ -85,7 +85,7 @@ get_header(); ?>
 
                         <!-- NO Recomendado -->
                         <div class="one_half last">
-                            <div class="radial-progress" data-progress="<?php  echo floor(($datos['votos_negativos']/$datos['total'])*100); ?>">
+                            <div class="radial-progress" data-progress="<?php  echo $datos['total'] > 0 ? floor(($datos['votos_negativos']/$datos['total'])*100) : 0; ?>">
                                 <div class="circle">
                                     <div class="mask full">
                                         <div class="fill"></div>
@@ -164,7 +164,7 @@ get_header(); ?>
                 </section>
 
                 <section class="two_third last">
-                    
+
 
                     <?php
                     get_currentuserinfo();
@@ -172,7 +172,7 @@ get_header(); ?>
                     if($user_id == 0){ ?>
                     <article class="content_ya_voto">
                         <p>Debe loguearse para poder votar.</p>
-                    </article>                   
+                    </article>
                     <?php }else{ if(userYaVoto($post->ID, $user_id)){ ?>
                     <article class="content_ya_voto">
                         <p>Usted a evaluado esta empresa.</p>

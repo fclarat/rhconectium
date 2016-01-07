@@ -1902,6 +1902,9 @@ class Walker_Comment extends Walker {
 		<?php endif; ?>
 		<div class="comment-author vcard">
 			<?php if ( 0 != $args['avatar_size'] ) echo get_avatar( $comment, $args['avatar_size'] ); ?>
+
+<!--			voto -->
+
 			<?php printf( __( '<cite class="fn">%s</cite> <span class="says">says:</span>' ), get_comment_author_link() ); ?>
 		</div>
 		<?php if ( '0' == $comment->comment_approved ) : ?>
@@ -1956,7 +1959,24 @@ class Walker_Comment extends Walker {
 						<?php if ( 0 != $args['avatar_size'] ) echo get_avatar( $comment, $args['avatar_size'] ); ?>
 						<?php printf( __( '%s <span class="says">says:</span>' ), sprintf( '<b class="fn">%s</b>', get_comment_author_link() ) ); ?>
 					</div><!-- .comment-author -->
+					<div class="comment-author vcard">
+						<?php
 
+						$comment_post_ID = isset($_POST['comment_post_ID']) ? (int) $_POST['comment_post_ID'] : 0;
+						$post = get_post($comment_post_ID);
+
+						if (userGetVote($post->ID, $comment->user_id) == 1) {
+						?>
+							<img style="float:right" src="<?php bloginfo('template_url'); ?>/img/icon_recomendado.png" alt="recomendada">
+						<?php
+						} elseif (userGetVote($post->ID, $comment->user_id) == -1) {
+						?>
+							<img style="float:right" src="<?php bloginfo('template_url'); ?>/img/icon_no_recomendado.png" alt="recomendada">
+						<?php
+						}
+						?>
+<!--						<b class="fn"> --><?php // var_dump(userGetVote($post->ID, $comment->user_id)); ?><!--</b>-->
+					</div><!-- .comment-author -->
 					<div class="comment-metadata">
 						<a href="<?php echo esc_url( get_comment_link( $comment->comment_ID, $args ) ); ?>">
 							<time datetime="<?php comment_time( 'c' ); ?>">
@@ -1967,7 +1987,7 @@ class Walker_Comment extends Walker {
 					</div><!-- .comment-metadata -->
 
 					<?php if ( '0' == $comment->comment_approved ) : ?>
-					<p class="comment-awaiting-moderation"><?php _e( 'Your comment is awaiting moderation.' ); ?></p>
+					<p class="comment-awaiting-moderation"> <?php _e( 'Your comment is awaiting moderation.' ); ?></p>
 					<?php endif; ?>
 				</footer><!-- .comment-meta -->
 
