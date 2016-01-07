@@ -1,3 +1,35 @@
+// AUTOCOMPLETE
+
+$(window).load(function(){
+  var availableTags = [
+		"ActionScript",
+		"AppleScript",
+		"Asp",
+		"BASIC",
+		"C",
+		"C++",
+		"Clojure",
+		"COBOL",
+		"ColdFusion",
+		"Erlang",
+		"Fortran",
+		"Groovy",
+		"Haskell",
+		"Java",
+		"JavaScript",
+		"Lisp",
+		"Perl",
+		"PHP",
+		"Python",
+		"Ruby",
+		"Scala",
+		"Scheme"
+	];
+	$( "#s" ).autocomplete({
+		source: availableTags
+	});
+})
+
 // FLEXSLIDER
 
 $(window).load(function(){
@@ -89,7 +121,7 @@ function chk_labels(obj, init) {
     if (objs[i].htmlFor == obj.id) {
       if (!init) { // cycle through each label belonging to checkbox
         if (!U.hasClass(objs[i], 'chk')) { // adjust class of label to checked style, set checked
-        
+
           if (obj.type.toLowerCase() == 'radio') {
             var radGroup = objs[i].className;
             var res = radGroup.split(" ");
@@ -99,11 +131,11 @@ function chk_labels(obj, init) {
               U.removeClass(relLabels[r], 'chk');
               U.addClass(relLabels[r], 'clr');
             }
-            
+
             U.removeClass(objs[i], 'clr');
             U.addClass(objs[i], 'chk');
             obj.checked = true;
-            
+
           }
           else {
             U.removeClass(objs[i], 'clr');
@@ -160,26 +192,26 @@ $(document).ready(function() {
     type: 'ajax',
     mainClass: 'mfp-fade',
     closeBtnInside: true,
-  
+
     callbacks: {
       parseAjax: function(mfpResponse) {
         mfpResponse.data = $(mfpResponse.data).find('.ajax_modal');
       }
     }
   });
- 
+
   $('.btn_registro').magnificPopup({
     type: 'ajax',
     mainClass: 'mfp-fade',
     closeBtnInside: true,
-  
+
     callbacks: {
       parseAjax: function(mfpResponse) {
         mfpResponse.data = $(mfpResponse.data).find('.ajax_modal');
       },
       ajaxContentAdded: function() {
-        inicializarAjaxRegister();  
-      }  
+        inicializarAjaxRegister();
+      }
     }
   });
 
@@ -187,14 +219,14 @@ $(document).ready(function() {
     type: 'ajax',
     mainClass: 'mfp-fade',
     closeBtnInside: true,
-  
+
     callbacks: {
       parseAjax: function(mfpResponse) {
         mfpResponse.data = $(mfpResponse.data).find('.ajax_modal');
       },
       ajaxContentAdded: function() {
-        inicializarAjaxRegisterEmpresa();  
-      }  
+        inicializarAjaxRegisterEmpresa();
+      }
     }
   });
 
@@ -202,7 +234,7 @@ $(document).ready(function() {
     type: 'ajax',
     mainClass: 'mfp-fade',
     closeBtnInside: true,
-  
+
     callbacks: {
       parseAjax: function(mfpResponse) {
         mfpResponse.data = $(mfpResponse.data).find('.ajax_modal');
@@ -221,8 +253,8 @@ $(document).ready(function() {
             $(this).addClass("a_cambiar");
           }
         });
-        inicializarAjaxEditarEmpresa();  
-      }  
+        inicializarAjaxEditarEmpresa();
+      }
     }
   });
 
@@ -232,13 +264,13 @@ $(document).ready(function() {
     type: 'ajax',
     mainClass: 'mfp-fade',
     closeBtnInside: true,
-  
+
     callbacks: {
       parseAjax: function(mfpResponse) {
         mfpResponse.data = $(mfpResponse.data).find('.ajax_modal');
       },
       ajaxContentAdded: function() {
-        inicializarAjaxLogin(); 
+        inicializarAjaxLogin();
         inicializarAjaxRetrievePassword();
         $('.recuperar-password').on('click', function(){
           $('form#form_login_user').fadeOut(function(){$('form#form_recuperar_password').fadeIn();})
@@ -246,7 +278,7 @@ $(document).ready(function() {
         $('.volver-login').on('click', function(){
           $('form#form_recuperar_password').fadeOut(function(){$('form#form_login_user').fadeIn();})
         });
-      }  
+      }
     }
   });
 
@@ -254,14 +286,14 @@ $(document).ready(function() {
     type: 'ajax',
     mainClass: 'mfp-fade',
     closeBtnInside: true,
-  
+
     callbacks: {
       parseAjax: function(mfpResponse) {
         mfpResponse.data = $(mfpResponse.data).find('.ajax_modal');
       },
       ajaxContentAdded: function() {
-        inicializarAjaxContactarEmpresa(); 
-      }  
+        inicializarAjaxContactarEmpresa();
+      }
     }
   });
 
@@ -273,15 +305,15 @@ function inicializarAjaxContactarEmpresa() {
         $('form#form_contactar_empresa p.status').removeClass('message_ok');
         $('form#form_contactar_empresa p.status').removeClass('message_error');
         $('form#form_contactar_empresa p.status').show().text(ajax_login_object.loadingmessage);
-        e.preventDefault();   
+        e.preventDefault();
         $.ajax({
             type: 'POST',
             dataType: 'json',
             url: ajax_contactar_empresa_object.ajaxurl,
-            data: { 
-                'action': 'ajaxcontactarempresa', 
-                'consulta': $('form#form_contactar_empresa [name="consulta"]').val(), 
-                'security': $('form#form_contactar_empresa #security').val(), 
+            data: {
+                'action': 'ajaxcontactarempresa',
+                'consulta': $('form#form_contactar_empresa [name="consulta"]').val(),
+                'security': $('form#form_contactar_empresa #security').val(),
             },
             success: function(data){
                 if (data.consulta_enviada == true){
@@ -297,7 +329,7 @@ function inicializarAjaxContactarEmpresa() {
             error: function(xhr, status, error) {
               var err = eval("(" + xhr.responseText + ")");
             }
-        });       
+        });
     });
 }
 
@@ -308,17 +340,17 @@ function inicializarAjaxLogin() {
         $('form#form_login_user p.status').removeClass('message_ok');
         $('form#form_login_user p.status').removeClass('message_error');
         $('form#form_login_user p.status').show().text(ajax_login_object.loadingmessage);
-        e.preventDefault();   
+        e.preventDefault();
         $.ajax({
             type: 'POST',
             dataType: 'json',
             url: ajax_login_object.ajaxurl,
-            data: { 
+            data: {
                 'action': 'ajaxlogin', //calls wp_ajax_nopriv_ajaxlogin
-                'username': $('form#form_login_user [name="usuario"]').val(), 
+                'username': $('form#form_login_user [name="usuario"]').val(),
                 'password': $('form#form_login_user [name="pass"]').val(),
-                'remember': $('form#form_login_user [name="checkboxG4"]').is(':checked'), 
-                'security': $('form#form_login_user #security').val(), 
+                'remember': $('form#form_login_user [name="checkboxG4"]').is(':checked'),
+                'security': $('form#form_login_user #security').val(),
             },
             success: function(data){
                 if (data.loggedin == true){
@@ -331,7 +363,7 @@ function inicializarAjaxLogin() {
                     document.location.href = ajax_login_object.redirecturl;
                 }
             }
-        });       
+        });
     });
 }
 
@@ -346,9 +378,9 @@ function inicializarAjaxRegister(){
             type: 'POST',
             dataType: 'json',
             url: ajax_register_object.ajaxurl,
-            data: { 
+            data: {
                 'action': 'ajaxregister', //calls wp_ajax_nopriv_ajaxregister
-                'username': $('form#form_registro_user [name="nombre"]').val(), 
+                'username': $('form#form_registro_user [name="nombre"]').val(),
                 'nickname': $('form#form_registro_user [name="nickname"]').val(),
                 'password': $('form#form_registro_user [name="pass"]').val(),
                 'password_confirm': $('form#form_registro_user [name="confirme_pass"]').val(),
@@ -367,7 +399,7 @@ function inicializarAjaxRegister(){
                     document.location.href = ajax_register_object.redirecturl;
                 }
             }
-        });  
+        });
     });
 }
 
@@ -377,15 +409,15 @@ function inicializarAjaxRetrievePassword() {
         $('form#form_recuperar_password p.status').removeClass('message_ok');
         $('form#form_recuperar_password p.status').removeClass('message_error');
         $('form#form_recuperar_password p.status').show().text(ajax_retrieve_object.loadingmessage);
-        e.preventDefault();   
+        e.preventDefault();
         $.ajax({
             type: 'POST',
             dataType: 'json',
             url: ajax_retrieve_object.ajaxurl,
-            data: { 
+            data: {
                 'action': 'ajaxretrievepassword', //calls wp_ajax_nopriv_ajaxretrievepasswordn
-                'email': $('form#form_recuperar_password [name="email"]').val(), 
-                'security': $('form#form_recuperar_password #security').val(), 
+                'email': $('form#form_recuperar_password [name="email"]').val(),
+                'security': $('form#form_recuperar_password #security').val(),
             },
             success: function(data){
               if (data.loggedin == true){
@@ -395,7 +427,7 @@ function inicializarAjaxRetrievePassword() {
               }
               $('form#form_recuperar_password p.status').text(data.message);
             }
-        });       
+        });
     });
 }
 
@@ -412,20 +444,20 @@ function inicializarAjaxRegisterEmpresa(){
           rubros.push($(this).val());
         }
       });
-      datos = { 
+      datos = {
         'action': 'ajaxregisterempresa', //calls wp_ajax_ajaxregisterempresa
-        'nombre_fantasia': $('form#form_registro_empresa [name="nombre_fantasia"]').val(), 
+        'nombre_fantasia': $('form#form_registro_empresa [name="nombre_fantasia"]').val(),
         'razon_social': $('form#form_registro_empresa [name="razon_social"]').val(),
         'email_empresa': $('form#form_registro_empresa [name="email_empresa"]').val(),
         'web': $('form#form_registro_empresa [name="web"]').val(),
         'domicilio': $('form#form_registro_empresa [name="domicilio"]').val(),
         'numero': $('form#form_registro_empresa [name="numero"]').val(),
         'piso': $('form#form_registro_empresa [name="piso"]').val(),
-        'localidad': $('form#form_registro_empresa [name="localidad"]').val(),    
+        'localidad': $('form#form_registro_empresa [name="localidad"]').val(),
         'cp': $('form#form_registro_empresa [name="cp"]').val(),
         'provincia': $('form#form_registro_empresa [name="provincia"]').val(),
         'telefono': $('form#form_registro_empresa [name="telefono"]').val(),
-        'descripcion': $('form#form_registro_empresa [name="descripcion"]').val(), 
+        'descripcion': $('form#form_registro_empresa [name="descripcion"]').val(),
         'rubros' : rubros,
         'security': $('form#form_registro_empresa #signonsecurity').val(),
         'terminos': $('form#form_registro_empresa [name="terminos"]').is(':checked'),
@@ -433,11 +465,11 @@ function inicializarAjaxRegisterEmpresa(){
 
 
       var formData = new FormData();
-      
+
       $.each($('form#form_registro_empresa [name="logo_empresa"]')[0].files, function(i, file) {
           formData.append('logo_empresa', file);
-        }); 
-      
+        });
+
       $.each(datos, function(index, value) {
           formData.append(index, value);
       });
@@ -445,9 +477,9 @@ function inicializarAjaxRegisterEmpresa(){
       $.ajax({
           type: 'POST',
           dataType: 'json',
-          url: ajax_register_empresa_object.ajaxurl,       
+          url: ajax_register_empresa_object.ajaxurl,
           data: formData,
-          //data: formData,       
+          //data: formData,
           processData: false,
           contentType: false,
           success: function(data){
@@ -458,7 +490,7 @@ function inicializarAjaxRegisterEmpresa(){
             }
             $('form#form_registro_empresa p.status').text(data.message);
           }
-      }); 
+      });
   });
 }
 
@@ -476,20 +508,20 @@ function inicializarAjaxEditarEmpresa(){
           rubros.push($(this).val());
         }
       });
-      datos = { 
+      datos = {
         'action': 'ajaxeditempresa', //calls wp_ajax_ajaxeditempresa
         'id_empresa': $('form#form_editar_empresa [name="id_empresa"]').val(),
-        'nombre_fantasia': $('form#form_editar_empresa [name="nombre_fantasia"]').val(), 
+        'nombre_fantasia': $('form#form_editar_empresa [name="nombre_fantasia"]').val(),
         'email_empresa': $('form#form_editar_empresa [name="email_empresa"]').val(),
         'web': $('form#form_editar_empresa [name="web"]').val(),
         'domicilio': $('form#form_editar_empresa [name="domicilio"]').val(),
         'numero': $('form#form_editar_empresa [name="numero"]').val(),
         'piso': $('form#form_editar_empresa [name="piso"]').val(),
-        'localidad': $('form#form_editar_empresa [name="localidad"]').val(),    
+        'localidad': $('form#form_editar_empresa [name="localidad"]').val(),
         'cp': $('form#form_editar_empresa [name="cp"]').val(),
         'provincia': $('form#form_editar_empresa [name="provincia"]').val(),
         'telefono': $('form#form_editar_empresa [name="telefono"]').val(),
-        'descripcion': $('form#form_editar_empresa [name="descripcion"]').val(), 
+        'descripcion': $('form#form_editar_empresa [name="descripcion"]').val(),
         'rubros' : rubros,
         'security': $('form#form_editar_empresa #signonsecurity').val(),
         'terminos': $('form#form_editar_empresa [name="terminos"]').is(':checked'),
@@ -497,11 +529,11 @@ function inicializarAjaxEditarEmpresa(){
 
 
       var formData = new FormData();
-      
+
       $.each($('form#form_editar_empresa [name="logo_empresa"]')[0].files, function(i, file) {
           formData.append('logo_empresa', file);
-        }); 
-      
+        });
+
       $.each(datos, function(index, value) {
           formData.append(index, value);
       });
@@ -509,9 +541,9 @@ function inicializarAjaxEditarEmpresa(){
       $.ajax({
           type: 'POST',
           dataType: 'json',
-          url: ajax_edit_empresa_object.ajaxurl,       
+          url: ajax_edit_empresa_object.ajaxurl,
           data: formData,
-          //data: formData,       
+          //data: formData,
           processData: false,
           contentType: false,
           success: function(data){
@@ -522,7 +554,7 @@ function inicializarAjaxEditarEmpresa(){
             }
             $('form#form_editar_empresa p.status').text(data.message);
           }
-      }); 
+      });
   });
 }
 
@@ -537,16 +569,16 @@ function inicializarVotacion() {
       $(this).toggleClass('active');
       $(".content_motivos_no_recomiendo").find('.clr').removeClass('btn_rotate');
       if($(this).hasClass('active')){
-        $(".content_motivos_no_recomiendo").slideDown();  
+        $(".content_motivos_no_recomiendo").slideDown();
       }else{
-        $(".content_motivos_no_recomiendo").slideUp();  
+        $(".content_motivos_no_recomiendo").slideUp();
       }
       if($(".btn_recomiendo").hasClass('active')){
         $(".btn_recomiendo").removeClass('active');
 
       }
       if($(this).hasClass('active') &&  !$(".content_motivos_no_recomiendo").is(":visible") ){
-        $(".content_motivos_no_recomiendo").slideToggle();  
+        $(".content_motivos_no_recomiendo").slideToggle();
       }
 
       if($(this).hasClass('active')){
@@ -598,7 +630,7 @@ function inicializarVotacion() {
       }else{
         $(".content_motivos_no_recomiendo").slideUp();
       }
-      
+
       if($(this).hasClass('active')){
         vote_params.voto = 1;
       }else{
@@ -610,19 +642,19 @@ function inicializarVotacion() {
         //$('form#form_recomendacion_empresa p.status').removeClass('message_ok');
         //$('form#form_recomendacion_empresa p.status').removeClass('message_error');
         //$('form#form_recomendacion_empresa p.status').show().text(ajax_login_object.loadingmessage);
-        e.preventDefault();   
-        
+        e.preventDefault();
+
         vote_params.mensaje = $('form#form_recomendacion_empresa [name="comentarios"]').val();
-        
-        datos = { 
+
+        datos = {
           'action': 'ajaxvoteop', //calls wp_ajax_nopriv_ajaxvoteop
-          'voto': vote_params.voto, 
-          'mensaje': vote_params.mensaje, 
+          'voto': vote_params.voto,
+          'mensaje': vote_params.mensaje,
           'calidad': vote_params.calidad*vote_params.voto,
           'cumplimiento': vote_params.cumplimiento*vote_params.voto,
-          'administrativos': vote_params.administrativo*vote_params.voto, 
+          'administrativos': vote_params.administrativo*vote_params.voto,
           'check_empresa' : $("input[name='trabaje_con_empresa']").is(":checked"),
-          'security': $('form#form_recomendacion_empresa #signonsecurity').val(), 
+          'security': $('form#form_recomendacion_empresa #signonsecurity').val(),
         };
 
         $.ajax({
@@ -639,31 +671,18 @@ function inicializarVotacion() {
                 $('form#form_recomendacion_empresa p.status').text(data.message);
                 if (data.vote_ok == true){
                   if(datos.voto > 0){
-                    $( "a[data-task='like']" ).trigger('click');    
+                    $( "a[data-task='like']" ).trigger('click');
                   }
                   if(datos.voto < 0){
-                    $( "a[data-task='unlike']" ).trigger('click');    
+                    $( "a[data-task='unlike']" ).trigger('click');
                   }
                   setTimeout(function(){
                     window.location.href = data.redirect;
                   }, 3000);
                 }
             }
-        });      
+        });
     });
 }
 
 inicializarVotacion();
-
-
-
-
-
-
-
-
-
-
-
-
-
